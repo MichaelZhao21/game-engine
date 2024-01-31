@@ -1,4 +1,4 @@
-# Custom Game Engine (that I'm trying to make :sob:)
+# Custom Game Engine (that I'm _trying_ to make using C :sob:)
 
 ## Requirements
 
