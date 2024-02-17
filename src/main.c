@@ -7,9 +7,10 @@
 #include <SDL2/SDL.h>
 
 #include "graphics.h"
+#include "log.h"
 
 // Define vertex shader source
-const GLchar* vertexSource = R"glsl(
+const GLchar *vertexSource = R"glsl(
     #version 150 core
 
     in vec2 position;
@@ -28,14 +29,15 @@ const char *fragmentSource = R"glsl(
 
     void main()
     {
-        outColor = vec4(1.0, 1.0, 1.0, 1.0);
+        outColor = vec4(195/255.0, 122/255.0, 255/255.0, 1.0);
     }
-    )glsl";
+)glsl";
+
+int test_stuff(Graphics*);
 
 int main()
 {
     Graphics graphics;
-    GLenum err;
 
     // Initialize graphics + SDL
     if (graphics_init(&graphics, 800, 600) != 0)
@@ -44,9 +46,30 @@ int main()
         exit(-1);
     }
 
-    // SDL_Delay(2000);
-    // graphics_cleanup(&graphics);
-    // return 0;
+    // Initialize the log
+    if (restart_gl_log() != 0)
+    {
+        fprintf(stderr, "Could not initialize log\n");
+        exit(-1);
+    }
+
+    // Log the gl params
+    log_gl_params();
+
+    // Test stuff
+    test_stuff(&graphics);
+
+    // Clean up the graphics stuff
+    graphics_cleanup(&graphics);
+
+    // Exit
+    printf("Exiting...\n");
+    exit(0);
+}
+
+int test_stuff(Graphics *graphics)
+{
+    GLenum err;
 
     // Def vertices for triangle
     float vertices[] = {
@@ -60,7 +83,7 @@ int main()
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
+
     // Create Vertex Array Objects
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -81,7 +104,6 @@ int main()
         fprintf(stderr, "OpenGL error 1: %s\n", gluErrorString(err));
         exit(-1);
     }
-
 
     // Create Vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -124,7 +146,6 @@ int main()
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
 
-
     // Check for error
     while ((err = glGetError()) != GL_NO_ERROR)
     {
@@ -148,12 +169,8 @@ int main()
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        SDL_GL_SwapWindow(graphics.window);
+        SDL_GL_SwapWindow(graphics->window);
     }
 
-    graphics_cleanup(&graphics);
-
-    // Exit
-    printf("Exiting...\n");
-    exit(0);
+    return 0;
 }

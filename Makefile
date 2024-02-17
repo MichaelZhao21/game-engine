@@ -9,7 +9,8 @@ BUILD_DIR := build
 
 # Define input files
 FILES := $(SOURCE_DIR)/graphics.c \
-			$(SOURCE_DIR)/main.c
+			$(SOURCE_DIR)/log.c \
+			$(SOURCE_DIR)/main.c \
 
 # Define output files for each input file (replace .c with .o)
 OUT_FILES := $(patsubst $(SOURCE_DIR)/%.c, $(BUILD_DIR)/%.o, $(FILES))
@@ -31,7 +32,7 @@ $(BUILD_DIR):
 
 # Run the program
 run: all
-	$(BUILD_DIR)/main
+	cd $(BUILD_DIR) && ./main
 
 # Clean target to remove all files in the build directory
 clean:
